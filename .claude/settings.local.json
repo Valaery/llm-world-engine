@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git rm:*)",
+      "Bash(git commit -m \"Remove all built files from gh-pages\n\nCo-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>\")"
+    ]
+  }
+}
