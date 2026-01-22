@@ -1,11 +1,30 @@
+# OS files
 .DS_Store
-.gitignore
-node_modules
-public
-prof
+Thumbs.db
+desktop.ini
+
+# Dependencies
+node_modules/
+
+# Build outputs
+public/
+.quartz-cache/
 tsconfig.tsbuildinfo
-.obsidian
-.quartz-cache
+prof/
+
+# Obsidian
+.obsidian/
+.file_sync_state.json
+
+# Private content
 private/
+
+# Replit
 .replit
 replit.nix
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
