@@ -5,7 +5,7 @@
 
 ## 🌐 View the Knowledge Base Online
 
-**Live Site:** https://valaery.github.io/discord-chat-exporter/
+**Live Site:** https://valaery.github.io/llm-world-engine/
 
 This GitHub Pages site presents the complete LLM World Engine Knowledge Base extracted from the SillyTavern Discord community. Browse the full documentation with an interactive graph visualization, full-text search, and seamless wiki-link navigation.
 

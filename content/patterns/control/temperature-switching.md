@@ -557,6 +557,112 @@ class EnsembleTemperature:
         return best
 ```
 
+## Implementation in ChatBotRPG
+
+**Status**: ✅ **EXACT MATCH** - Task-specific temperature switching across all subsystems
+
+**Source Files**: Multiple files use different temperatures for different tasks
+
+### Production Temperature Table
+
+| Task | Temperature | File | Line | Rationale |
+|------|-------------|------|------|-----------|
+| Intent analysis | 0.1 | `scribe/agent_chat.py` | ~300 | Very deterministic classification |
+| Rule evaluation | 0.1 | `rules/rule_evaluator.py` | ~50 | Structured tag selection |
+| Summarization | 0.3 | `core/make_inference.py` | 26 | Factual accuracy |
+| Character responses | 0.3 | `core/character_inference.py` | ~800 | Balanced creativity/consistency |
+| Default narration | 0.3 | `config.json` | 7 | General purpose |
+| Narration (Scribe) | 0.7 | `scribe/agent_chat.py` | ~500 | Creative narrative generation |
+| Character generation | 0.7 | `generate/generate_actor.py` | ~100 | Varied, creative characters |
+| NPC notes | 0.7 | `core/character_inference.py` | ~1286 | Natural first-person memory |
+
+### Production Code Examples
+
+**Intent Analysis** (Low Temperature = Deterministic):
+```python
+# File: src/scribe/agent_chat.py (line 258)
+intent = make_inference(
+    context=[{"role": "user", "content": intent_prompt}],
+    temperature=0.1,  # Very deterministic for classification
+    max_tokens=256
+)
+```
+
+**Character Generation** (High Temperature = Creative):
+```python
+# File: src/generate/generate_actor.py (line 180)
+description = make_inference(
+    context=[{"role": "user", "content": desc_prompt}],
+    temperature=0.7,  # More varied/creative output
+    max_tokens=2048
+)
+```
+
+### Task-Specific Rationale
+
+**0.1 Temperature** (Intent, Rules):
+- Must be deterministic for game logic
+- JSON output requires consistency
+- Tag selection must be predictable
+- Intent classification affects context routing
+
+**0.3 Temperature** (Responses, Summary):
+- Balanced between creativity and reliability
+- Character responses need consistency per NPC
+- Summaries must be factual but readable
+
+**0.7 Temperature** (Generation, Narration):
+- Character variety (avoid "all characters sound same")
+- Narrative creativity (avoid repetitive descriptions)
+- Memory notes need natural voice
+
+### Default Configuration
+
+**File**: `config.json` (line 7)
+
+```json
+{
+  "default_temperature": 0.3  // Safe middle ground for most tasks
+}
+```
+
+**Observation**: Default is conservative (0.3) - explicit override required for creative tasks.
+
+### Per-Rule Temperature Override
+
+**Discovered Feature** (not in Discord):
+
+Rules can specify custom temperatures:
+
+```python
+# File: src/core/character_inference.py (line 380)
+rule_temp = rule.get('temperature', default_temperature)
+```
+
+**Use Case**: Critical story moments use higher temp for dramatic variation, routine events use lower temp for consistency.
+
+### Validation
+
+**From**: [[chatbotrpg-analysis/validation/01-Discord-Claims-Validation|Discord Claims Validation]] (lines 398-407)
+
+```
+Status: ✅ VALIDATED
+
+Evidence:
+- Intent analysis: 0.1 (very deterministic)
+- Summarization: 0.3 (factual)
+- Generation: 0.7 (more varied)
+- Default: 0.3 (balanced)
+
+Conclusion: ✅ EXACT MATCH - Task-specific temperatures
+```
+
+### Pattern-to-Code Mapping
+
+**From**: [[chatbotrpg-analysis/patterns/01-Pattern-to-Code-Mapping|Pattern-to-Code Mapping]] (lines 906-954)
+
+Complete mapping of all temperature usage across codebase validates Discord discussions are production-accurate.
+
 ## Tags
 
-#temperature #sampling #control #optimization #task-specific #llm-settings
+#temperature #sampling #control #optimization #task-specific #llm-settings #chatbotrpg-validated

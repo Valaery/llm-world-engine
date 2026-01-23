@@ -539,6 +539,166 @@ Start loose, tighten based on observed violations:
 "PROHIBITED: Teleportation (no instant travel), Impossible items (no diamond horses, infinite bags), Unlimited resources (no sudden wealth)"
 ```
 
+## Implementation in ChatBotRPG
+
+**Status**: ✅ **EXACT MATCH** - Extensive constraint usage across all generation prompts
+
+**Source Files**: All prompt files in `src/generate/` directory
+
+### Production Example: Character Generation Constraints
+
+**File**: `src/generate/generate_actor.py` (lines 83-88)
+
+```python
+prompt = f"""{instruction_prefix}Given the following information about a character named {character_name},
+write a single cohesive paragraph describing their background, role, and character essence.
+Focus on who they are, what they do, and their place in the world.
+
+CONSTRAINTS:
+- Write in natural narrative style
+- NO bullet points, lists, or fragmented sentences
+- Keep it to ONE well-developed paragraph that flows naturally
+
+Current Character Sheet:
+{context}
+
+Description:"""
+```
+
+### Production Example: Equipment Constraints
+
+**File**: `src/generate/generate_actor.py` (lines 115-220)
+
+```python
+prompt = (
+    f"{instruction_prefix}You are an expert wardrobe designer. "
+    "Given the following character information, generate a JSON object representing the character's worn equipment. "
+    "\n\n"
+    "CONSTRAINTS:"
+    "\n"
+    "- The equipment should match the character's theme, type, and station"
+    "- Respect the genre (e.g., medieval, modern, sci-fi)"
+    "- The 'left_hand' and 'right_hand' slots are specifically for WORN items like gloves, rings, bracelets, etc."
+    "- Do NOT put held items (weapons, shields, tools) here"
+    "- If multiple items are worn in a slot, separate them with commas"
+    "- Be very thorough, but if a slot is empty, use an empty string \"\""
+    "- Do NOT include hairstyles"
+    "- Provide minimal visual description"
+    "- Ensure all listed keys are present"
+    "\n\n"
+    "The JSON object MUST contain exactly these keys: "
+    f'{", ".join(EQUIPMENT_JSON_KEYS)}.'
+    "\n\n"
+    "Equipment JSON:"
+)
+```
+
+**Why So Many Constraints**: Without them, LLM would:
+1. Put weapons in hand slots (not worn items)
+2. Include hairstyles in equipment
+3. Generate narrative text instead of JSON
+4. Miss required slots
+5. Ignore genre (knight in t-shirt)
+
+### Negative Constraints Pattern
+
+ChatBotRPG uses "Do NOT..." format extensively:
+
+**Personality Generation** (`generate_actor.py` lines 112-118):
+```python
+"Focus on psychological and behavioral characteristics only. "
+"Do not write sentences or explanations - just traits separated by commas. "
+"Aim for 15-25 traits that capture the full personality spectrum."
+```
+
+**Appearance Generation** (`generate_actor.py` lines 143-149):
+```python
+"Focus ONLY on physical traits - do not include clothing, accessories, or equipment. "
+"Do not write sentences or explanations - just physical descriptors separated by commas. "
+"Aim for 15-25 traits that capture the complete physical appearance."
+```
+
+### Format Enforcement Constraints
+
+**All generation prompts include explicit format constraints:**
+
+- **Name**: "Output just this name without any formatting or extra text"
+- **Description**: "Single cohesive paragraph... no bullet points"
+- **Personality**: "Comma-separated list... No sentences"
+- **Appearance**: "Comma-separated list... No sentences"
+- **Equipment**: "JSON object with exact keys... No explanations"
+
+### Narration Constraints
+
+**File**: `src/core/character_inference.py` (lines 268-274)
+
+```python
+system_msg_base_intro = (
+    "You are in a third-person text RPG. "
+    "You are responsible for writing ONLY the actions and dialogue of your assigned character. "
+    "You must ALWAYS write in third person (using the character's name or 'he/she/they'), "
+    "NEVER in first or second person. "
+    "Write one single open-ended response (do NOT describe the OUTCOME of actions)."
+)
+```
+
+**Key Constraint**: LLM must NOT decide outcomes (program-first architecture enforcement).
+
+### Why Constraints Work
+
+**From Production Analysis**:
+
+Without constraints:
+- Equipment prompts generated narrative: "The knight wears shining armor..." ❌
+- Name prompts added explanations: "A good name would be Thorgar because..." ❌
+- Personality mixed traits and descriptions: "Brave warrior who fought in many battles" ❌
+
+With constraints:
+- Equipment: Valid JSON with 16 slots ✅
+- Name: Just "Thorgar" ✅
+- Personality: "brave, stern, loyal, battle-hardened, protective" ✅
+
+### Constraint Evolution Example
+
+**File**: `src/generate/generate_actor.py` (name generation)
+
+**Version 1** (hypothetical, not in code):
+```python
+"Generate a character name"
+```
+
+**Current Version** (lines 62-64):
+```python
+"Create a name for a character based on the information below. "
+"Output just the name without any formatting or extra text."
+```
+
+**Added Constraints**:
+- "Output just the name" → Prevents explanations
+- "Without any formatting" → Prevents markdown/quotes
+- "Extra text" → Prevents additions
+
+### Validation
+
+**From**: [[chatbotrpg-analysis/patterns/01-Pattern-to-Code-Mapping|Pattern-to-Code Mapping]] (lines 800-855)
+
+```
+Status: ✅ EXACT MATCH
+
+Evidence (All prompt files in generate/):
+- Character generation constraints
+- Equipment generation constraints
+- Narration constraints
+- All prompts use negative constraints ("Do NOT...")
+
+Pattern: All prompts use constraints to prevent common LLM errors
+```
+
+### Related Implementation Files
+
+- [[chatbotrpg-analysis/prompts/01-Extracted-Prompts-Index|Extracted Prompts]] - All 15 prompts with full constraint text
+- [[chatbotrpg-analysis/validation/01-Discord-Claims-Validation|Discord Claims Validation]] - Constraint validation
+
 ## Tags
 
-#pattern #control #prompting #constraints #validation #llm-guidance
+#pattern #control #prompting #constraints #validation #llm-guidance #chatbotrpg-validated

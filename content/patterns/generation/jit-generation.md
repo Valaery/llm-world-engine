@@ -563,6 +563,143 @@ def safe_generate(generator, entity_id, entity_type, parent_id, max_retries=3):
             time.sleep(1)  # Brief delay before retry
 ```
 
+## Implementation in ChatBotRPG
+
+**Status**: ✅ **EXACT MATCH** - Character and location generation are purely on-demand
+
+**Source Files**:
+- `src/generate/generate_actor.py` - JIT character generation
+- `src/generate/generate_setting.py` - JIT location generation
+- `src/editor_panel/actor_manager.py` - Generation UI triggers
+
+### Production Example: On-Demand Character Generation
+
+**File**: `src/generate/generate_actor.py`
+
+ChatBotRPG generates characters **only when user clicks "Generate" button** in the actor editor:
+
+```python
+def generate_actor_fields_async(actor_name, location, genre, fields_to_generate):
+    """
+    Called only when user explicitly requests generation.
+    NO pre-generation at world creation.
+    """
+
+    if 'name' in fields_to_generate:
+        generated_name = _generate_character_name(genre)
+
+    if 'description' in fields_to_generate:
+        generated_desc = _generate_character_description(name, genre)
+
+    if 'personality' in fields_to_generate:
+        generated_personality = _generate_personality(name, description, genre)
+
+    # Only fields requested are generated
+```
+
+**Why JIT**: Saves LLM calls for unused characters - most NPCs in template library are never instantiated in actual gameplay.
+
+### Production Example: On-Demand Location Generation
+
+**File**: `src/generate/generate_setting.py`
+
+```python
+def generate_setting(world_data, region_name, parent_setting):
+    """
+    Called only when user clicks "Generate" button in setting editor.
+    Location created only when needed.
+    """
+
+    prompt = f"Generate a new location in {parent_setting} within {region_name}..."
+    generated_setting = make_inference(
+        context=[{"role": "user", "content": prompt}],
+        url_type=get_default_utility_model(),
+        temperature=0.7
+    )
+
+    # Location not pre-generated, only when user requests
+```
+
+### Two-Tier Generation Model
+
+ChatBotRPG implements a two-tier approach:
+
+**Tier 1: Templates (World-Level)**
+- Location: `workflow_data_dir/resources/data files/`
+- Contains: Reusable actor/setting/item templates
+- Scope: Cross-playthrough, immutable
+- Generation: JIT when Game Master designs world
+
+**Tier 2: Instances (Playthrough-Level)**
+- Location: `workflow_data_dir/game/`
+- Contains: Active playthrough state (actors, settings, conversation)
+- Scope: Single playthrough, mutable
+- Generation: Copied from templates when first encountered
+
+**File References**: `src/core/character_inference.py` (lines 117-152)
+
+```python
+resources_dir = os.path.join(workflow_data_dir, 'resources', 'data files')
+actors_dir = os.path.join(resources_dir, 'actors')  # Templates (JIT created by GM)
+
+game_dir = os.path.join(workflow_data_dir, 'game')
+session_actors_dir = os.path.join(game_dir, 'actors')  # Instances (JIT copied on first use)
+```
+
+### Caching Strategy
+
+**From**: `src/core/character_inference.py` (lines 1330-1351)
+
+Once a character is instantiated in gameplay, ChatBotRPG creates a **session actor file**:
+
+```python
+def _copy_resource_actor_to_game_if_not_exist(self, workflow_data_dir, character_name):
+    """
+    JIT instantiation: Copy template to game directory on first encounter.
+    Subsequent references use cached session file.
+    """
+    game_actors_dir = os.path.join(workflow_data_dir, 'game', 'actors')
+    session_actor_path = os.path.join(game_actors_dir, f"{character_name}.json")
+
+    if os.path.exists(session_actor_path):
+        return  # Already instantiated, use cache
+
+    # First encounter - copy from template
+    resource_actor_path = _find_actor_file_path(workflow_data_dir, character_name)
+    if resource_actor_path:
+        shutil.copy(resource_actor_path, session_actor_path)
+```
+
+**Benefit**: Template remains immutable, session instance can evolve (relationships, variables, memories).
+
+### Performance Metrics
+
+**Token Costs** (from production analysis):
+- Character name: 256 tokens
+- Full character (7 fields): ~1,500 tokens total
+- Location: ~400 tokens
+
+**Latency**: 1-5 seconds per generation (acceptable for editor workflow)
+
+**Cost Savings**: If world has 100 NPCs but player only encounters 10 → 90% savings
+
+### When Generation Happens
+
+**Character Generation Triggers**:
+1. Game Master clicks "Generate" in actor editor
+2. User explicitly requests character creation
+
+**Character Instantiation Triggers**:
+1. Character first mentioned in conversation
+2. Character enters scene (timer-based or rule-based)
+
+**No Predictive Generation**: ChatBotRPG does NOT pre-generate likely encounters - pure on-demand model.
+
+### Related Implementation Files
+
+- [[chatbotrpg-analysis/patterns/01-Pattern-to-Code-Mapping|Pattern-to-Code Mapping]] - JIT validation (lines 622-667)
+- [[chatbotrpg-analysis/validation/01-Discord-Claims-Validation|Discord Claims Validation]] - JIT confirmed (lines 199-217)
+
 ## Tags
 
-#pattern #generation #jit #procedural #performance #caching #lazy-loading
+#pattern #generation #jit #procedural #performance #caching #lazy-loading #chatbotrpg-validated

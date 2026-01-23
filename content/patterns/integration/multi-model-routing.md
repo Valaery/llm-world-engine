@@ -471,6 +471,86 @@ class CostTracker:
 **Referenced in:**
 - [[01-Architecture-and-Design|Architecture Thread]]
 
+## Implementation in ChatBotRPG
+
+**Status**: ✅ **EXACT MATCH** - Three-model routing system implemented exactly as described
+
+**Source Files**:
+- `src/config.py` (lines 14-16) - Model configuration
+- `src/core/make_inference.py` (line 24) - Model selection
+- `src/rules/rule_evaluator.py` - CoT model usage
+
+### Production Model Configuration
+
+**File**: `src/config.py` (lines 14-16)
+
+```python
+DEFAULT_CONFIG = {
+    "default_model": "google/gemini-2.5-flash-lite-preview-06-17",      # Main generation
+    "default_cot_model": "google/gemini-2.5-flash-lite-preview-06-17",  # Chain-of-thought
+    "default_utility_model": "google/gemini-2.5-flash-lite-preview-06-17"  # Utility tasks
+}
+```
+
+### Actual Routing Table
+
+| Task | Model Type | Temperature | Max Tokens | File |
+|------|------------|-------------|------------|------|
+| Character responses | Main | 0.3 | 2048 | `character_inference.py` |
+| Narration | Main | 0.7 | 2048 | `scribe/agent_chat.py` |
+| Rule evaluation | CoT | 0.1 | 512 | `rules/rule_evaluator.py` |
+| Summarization | Utility | 0.3 | 1536 | `make_inference.py:26` |
+| Intent analysis | Utility | 0.1 | 256 | `scribe/agent_chat.py:258` |
+| Character generation | Utility | 0.7 | 256-512 | `generate/generate_actor.py:180` |
+
+### Production Code Example: CoT Model Usage
+
+**File**: `src/rules/rule_evaluator.py`
+
+```python
+evaluation = make_inference(
+    context=cot_context,
+    url_type=get_default_cot_model(),  # Uses CoT model (not main model)
+    temperature=0.1  # Lower temp for structured output
+)
+```
+
+**File**: `src/core/make_inference.py` (line 24)
+
+```python
+summary = make_inference(
+    context=[{"role": "user", "content": summary_prompt}],
+    url_type=get_default_utility_model(),  # Uses utility model for summarization
+    max_tokens=1536,
+    is_utility_call=True
+)
+```
+
+### Multi-Provider Support
+
+ChatBotRPG supports 3 providers via unified interface:
+
+1. **OpenRouter.ai** - Primary (aggregator for 100+ models)
+2. **Google GenAI** - Direct Google API with SDK
+3. **Local** - Local inference (LM Studio, llama.cpp, etc.)
+
+**Switching**: User-configurable in `config.json` (`current_service` field)
+
+**Source**: [[chatbotrpg-analysis/architecture/01-API-Integration-Complete|API Integration Documentation]]
+
+### Performance Impact
+
+**From Production Analysis**:
+- Different models optimize for different cognitive loads
+- CoT model uses low temperature (0.1) for deterministic reasoning
+- Main model uses medium temperature (0.3) for balanced responses
+- Utility model varies temperature by task (0.1-0.7)
+
+### Related Implementation Files
+
+- [[chatbotrpg-analysis/architecture/01-API-Integration-Complete|API Integration Complete]] - Full API routing documentation
+- [[chatbotrpg-analysis/patterns/01-Pattern-to-Code-Mapping|Pattern-to-Code Mapping]] - Multi-model routing validation (lines 386-443)
+
 ## Tags
 
-#llm #optimization #cost #routing #multi-model
+#llm #optimization #cost #routing #multi-model #chatbotrpg-validated

@@ -458,6 +458,161 @@ print(npc.narrative_description)
 **Referenced in:**
 - [[01-Architecture-and-Design|Architecture Thread]]
 
+## Implementation in ChatBotRPG
+
+**Status**: ✅ **EXACT MATCH** - Unified API interface for all LLM providers
+
+**Source Files**:
+- `src/core/make_inference.py` (lines 79-231) - Unified LLM API
+- `src/config.py` - Provider configuration
+
+### Production Example: Unified LLM API
+
+**File**: `src/core/make_inference.py`
+
+ChatBotRPG implements a single abstraction layer that works with 3 providers:
+
+```python
+def make_inference(
+    context: list[dict],           # Message history
+    user_message: str,             # Current user message
+    character_name: str | None,    # Current character
+    url_type: str,                 # Model name
+    max_tokens: int,               # Max output tokens
+    temperature: float,            # Temperature (0.0-1.0)
+    seed: int | None = None,       # Random seed (optional)
+    is_utility_call: bool = False, # Suppress logging if utility
+    allow_summarization_retry: bool = True  # Enable auto-summarization
+) -> str
+```
+
+### Provider Abstraction
+
+**Configuration** (`config.json`):
+```json
+{
+  "current_service": "openrouter",  // Switch providers here
+  "openrouter_api_key": "...",
+  "google_api_key": "...",
+  "local_base_url": "http://127.0.0.1:1234/v1"
+}
+```
+
+**Runtime Selection** (`make_inference.py` lines 82-91):
+```python
+current_service = get_current_service()  # "openrouter" | "google" | "local"
+
+if current_service == "google":
+    # Use Google GenAI SDK
+    return _make_google_genai_request(context, url_type, max_tokens, temperature, api_key)
+else:
+    # Use OpenAI-compatible HTTP (OpenRouter, Local)
+    return _make_http_request(context, url_type, max_tokens, temperature, api_key)
+```
+
+### Provider-Agnostic Callers
+
+All ChatBotRPG code calls the same interface, regardless of provider:
+
+```python
+# Character generation (utility model)
+response = make_inference(
+    context=[{"role": "user", "content": generation_prompt}],
+    url_type=get_default_utility_model(),
+    temperature=0.7
+)
+
+# Character response (main model)
+response = make_inference(
+    context=conversation_history,
+    url_type=get_default_model(),
+    temperature=0.3
+)
+
+# Rule evaluation (CoT model)
+response = make_inference(
+    context=cot_context,
+    url_type=get_default_cot_model(),
+    temperature=0.1
+)
+```
+
+**Key Benefit**: Switching from OpenRouter to Google to Local requires ZERO code changes - only config update.
+
+### OpenAI-Compatible Interface
+
+**Request Format** (lines 93-108):
+```python
+base_url = get_base_url_for_service()  # "https://openrouter.ai/api/v1"
+base_url = f"{base_url}/chat/completions"
+
+headers = {
+    "Content-Type": "application/json",
+    "Authorization": f"Bearer {api_key}",
+    "HTTP-Referer": "https://github.com/your-repo/your-project",
+    "X-Title": "ChatBot RPG"
+}
+
+payload = {
+    "model": url_type,  # "google/gemini-2.5-flash-lite-preview-06-17"
+    "temperature": temperature,
+    "max_tokens": max_tokens,
+    "top_p": 0.95,
+    "messages": context
+}
+```
+
+**Standardization**: Uses OpenAI's chat completion format, compatible with OpenRouter, local models (LM Studio, llama.cpp), and most API aggregators.
+
+### Error Handling & Retry Logic
+
+**Automatic Summarization Retry** (lines 128-223):
+
+When API returns "maximum context length exceeded", ChatBotRPG automatically:
+1. Summarizes conversation history (2-phase summarization)
+2. Reconstructs context with summary
+3. Retries request with `_summarization_attempted` flag
+
+**File Reference**: [[chatbotrpg-analysis/architecture/01-API-Integration-Complete|API Integration Complete]] (lines 263-373)
+
+### Google GenAI Special Handling
+
+**File**: `make_inference.py` (lines 36-77)
+
+Google GenAI uses different SDK (not HTTP):
+
+```python
+import google.genai as genai
+
+response = genai.chat(
+    model=model_name.replace('google/', ''),  # Strip "google/" prefix
+    messages=adjusted_context,  # system → user with [SYSTEM] prefix
+    config={"temperature": temperature, "max_output_tokens": max_tokens}
+)
+```
+
+**Abstraction**: Caller never knows which provider is used - interface is identical.
+
+### Production Benefits
+
+1. **Provider Independence**: Switch providers instantly via config
+2. **Cost Optimization**: Route expensive tasks to cheap local models
+3. **Fallback Capability**: If OpenRouter down, switch to Google/local
+4. **Testing**: Mock LLM client for unit tests
+
+### Performance
+
+**From**: [[chatbotrpg-analysis/architecture/01-API-Integration-Complete|API Integration]] (lines 607-640)
+
+- **Timeout**: 180 seconds (3 minutes)
+- **Typical Latency**: 1-30 seconds depending on model/prompt size
+- **Retry Overhead**: +15-50 seconds if summarization retry triggered
+
+### Related Implementation Files
+
+- [[chatbotrpg-analysis/architecture/01-API-Integration-Complete|API Integration Complete]] - Full 777-line analysis
+- [[chatbotrpg-analysis/patterns/01-Pattern-to-Code-Mapping|Pattern-to-Code Mapping]] - API abstraction validation (lines 342-382)
+
 ## Tags
 
-#api #rest #websocket #architecture #client-server
+#api #rest #websocket #architecture #client-server #chatbotrpg-validated

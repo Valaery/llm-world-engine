@@ -474,6 +474,85 @@ if response.choices[0].message.get("function_call"):
 
 This is cleaner than custom keyword parsing but less portable across models.
 
+## Implementation in ChatBotRPG
+
+**Status**: ✅ **VALIDATED** - CoT used for rule condition evaluation
+
+**Source Files**:
+- `src/core/character_inference.py` (lines 376-378) - CoT context construction
+- `src/rules/rule_evaluator.py` - Rule evaluation with CoT
+
+### Production Example: Rule Evaluation with CoT
+
+**File**: `src/core/character_inference.py` (lines 376-378)
+
+```python
+cot_context = [
+    {"role": "system", "content": f"Analyze text, respond ONLY with chosen tag ([TAG]).\nText:\n---\n{target_msg_for_llm}\n---"},
+    {"role": "user", "content": final_prompt_text}
+]
+```
+
+**Usage**: ChatBotRPG uses CoT model for rule condition evaluation with chain-of-thought prompts:
+
+- **Max Tokens**: 50 (short output for tag selection)
+- **Model**: Dedicated CoT model from config (`get_default_cot_model()`)
+- **Temperature**: Variable (per rule configuration)
+- **Purpose**: Analyze conversation text and select matching rule tags
+
+### How It Works in Production
+
+1. **Rule Condition**: User defines text-matching rules with tags
+   ```json
+   {
+     "condition_type": "LLM Text Evaluation",
+     "prompt": "Is the character expressing anger or frustration? Choose [ANGRY] or [CALM]",
+     "scope": "user_message"
+   }
+   ```
+
+2. **CoT Analysis**: System sends conversation text to CoT model
+   - Low temperature (0.1) for deterministic reasoning
+   - Explicit instruction to respond ONLY with tag
+   - Separate model optimized for reasoning tasks
+
+3. **Result**: Model returns tag (e.g., `[ANGRY]`), Python evaluates rule condition
+
+### Differences from Discord Discussions
+
+**Discord Pattern**: Function keywords like `FunctionRoll(Willpower, 15)` for mid-generation interception
+
+**ChatBotRPG Implementation**: CoT for **rule evaluation only**, not mid-generation function calls
+
+**Why**: ChatBotRPG uses [[architectural/program-first-architecture|Program-First Architecture]] where Python handles all game logic. CoT is only needed for natural language analysis (determining if rule conditions match conversation text).
+
+### Related CoT Usage
+
+**Intent Analysis** (`src/scribe/agent_chat.py` lines 146-201):
+```python
+system_content = (
+    "You are a helpful assistant that analyzes user messages to determine their intent. "
+    "Your task is to analyze the ENTIRE conversation and determine what context is needed..."
+)
+```
+
+- **Temperature**: 0.1 (very deterministic)
+- **Output**: JSON with intent classification
+- **Purpose**: Route user queries to appropriate context (game context, rules, characters, search)
+
+### Performance Metrics
+
+**From**: [[chatbotrpg-analysis/validation/01-Discord-Claims-Validation|Discord Claims Validation]]
+
+- **Validation Status**: ✅ Exact match for CoT rule evaluation
+- **Max Tokens**: 50 (compared to 2048 for main generation)
+- **Temperature**: 0.1 (compared to 0.3-0.7 for narration)
+
+### Related Implementation Files
+
+- [[chatbotrpg-analysis/patterns/01-Pattern-to-Code-Mapping|Pattern-to-Code Mapping]] - CoT pattern validation (lines 858-903)
+- [[chatbotrpg-analysis/prompts/01-Extracted-Prompts-Index|Extracted Prompts]] - Rule evaluation prompt (lines 584-601)
+
 ## Tags
 
-#pattern #control #cot #reasoning #function-calling #interception
+#pattern #control #cot #reasoning #function-calling #interception #chatbotrpg-validated

@@ -594,6 +594,132 @@ if __name__ == "__main__":
 - [[01-Architecture-and-Design|Architecture and Design Thread]]
 - [[05-State-Management|State Management Thread]]
 
+## Implementation in ChatBotRPG
+
+**Status**: ✅ **EXACT MATCH** - Character generation follows exact top-down cascade
+
+**Source Files**:
+- `src/generate/generate_actor.py` (lines 23-27) - Generation order constant
+- `src/generate/generate_actor.py` (lines 50-200) - Cascading generation logic
+
+### Production Example: Character Generation Cascade
+
+**File**: `src/generate/generate_actor.py` (lines 23-27)
+
+```python
+GENERATION_ORDER: typing.Final[list[str]] = [
+    "name", "description", "personality", "appearance", "goals", "story", "equipment"
+]
+```
+
+**Implementation**: Each field is generated in strict order, with previous fields injected as context:
+
+```
+Name (top-level identity)
+  ↓ context: {name}
+Description (who they are, what they do)
+  ↓ context: {name, description}
+Personality (behavioral traits)
+  ↓ context: {name, description, personality}
+Appearance (physical traits)
+  ↓ context: {name, description, personality, appearance}
+Goals (motivations)
+  ↓ context: {name, description, personality, appearance, goals}
+Story (background)
+  ↓ context: {name, description, personality, appearance, goals, story}
+Equipment (16-slot layered system)
+  ↓ context: {all above fields}
+```
+
+### Production Code: Context Accumulation
+
+**File**: `src/generate/generate_actor.py` (lines 86-92)
+
+```python
+prompt = f"""{instruction_prefix}{name_prompt_instruction}
+
+Current Character Sheet:
+{context}
+
+New Name:"""
+```
+
+Each generation step receives ALL previously generated fields as context, ensuring consistency.
+
+### Production Example: Equipment Cascade
+
+**File**: `src/generate/generate_actor.py` (lines 115-165)
+
+The equipment generation is the final step in the cascade and receives the most context:
+
+```python
+prompt = (
+    f"{instruction_prefix}You are an expert wardrobe designer. "
+    f"Given the following character information for {character_name}, "
+    "generate a JSON object representing the character's worn equipment. "
+    "The equipment should match the character's theme, type, and station. "
+    "Respect the genre (e.g., medieval, modern, sci-fi)."
+    "\n\n"
+    "Current Character Sheet:\n"
+    f"{context}"  # Includes name, description, personality, appearance, goals, story
+    "\n\n"
+    "The JSON object MUST contain exactly these keys: "
+    f'{", ".join(EQUIPMENT_JSON_KEYS)}.'  # 16 slots: head, neck, shoulders, hands, etc.
+)
+```
+
+**Result**: Equipment is always thematically consistent with character (e.g., knight gets armor, mage gets robes).
+
+### Validation from Production
+
+**From**: [[chatbotrpg-analysis/validation/01-Discord-Claims-Validation|Discord Claims Validation]] (lines 199-217)
+
+```
+Status: ✅ VALIDATED
+
+Evidence:
+- File: src/generate/generate_actor.py
+  - Lines 23-27: GENERATION_ORDER constant
+    ["name", "description", "personality", "appearance", "goals", "story", "equipment"]
+  - Lines 52-60: Enforces generation order
+  - Lines 56-58: Name forced to first position
+
+Conclusion: ✅ EXACT MATCH - Exact order as documented
+```
+
+### Why Top-Down Works for Characters
+
+**From Production Analysis**:
+
+1. **Name constrains description**: "Thorgar" → warrior/dwarf, not elf mage
+2. **Description constrains personality**: "Grizzled veteran" → stern/practical traits
+3. **Personality constrains appearance**: "Jovial, friendly" → warm expression, approachable
+4. **Appearance constrains equipment**: "Tall, muscular" → plate armor fits, not robes
+
+**Token Efficiency**:
+- Name: 256 tokens
+- Description/Personality/Appearance: 256 tokens each
+- Equipment: 512 tokens (most complex, needs full context)
+
+### Genre-Aware Cascade
+
+ChatBotRPG's equipment generator demonstrates genre awareness in the cascade:
+
+```python
+"Respect the genre (e.g., medieval, modern, sci-fi)."
+
+Examples (adapt to character & genre):
+  head: (Modern: baseball cap, sunglasses | Medieval: leather hood, metal helm | Empty: "")
+  left_hand/right_hand (WORN): (Modern: watch, gloves, rings | Medieval: leather gloves, signet ring, bracers | Empty: "")
+```
+
+**Result**: Top-level genre context propagates through entire cascade.
+
+### Related Implementation Files
+
+- [[chatbotrpg-analysis/patterns/01-Pattern-to-Code-Mapping|Pattern-to-Code Mapping]] - Hierarchical cascade validation (lines 669-721)
+- [[chatbotrpg-analysis/prompts/01-Extracted-Prompts-Index|Extracted Prompts]] - All character generation prompts (lines 47-244)
+
 ## Tags
 
-#pattern #generation #hierarchical #world-building #procedural #context-inheritance
+#pattern #generation #hierarchical #world-building #procedural #context-inheritance #chatbotrpg-validated

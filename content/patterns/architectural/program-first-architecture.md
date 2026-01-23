@@ -366,6 +366,72 @@ User Input → LLM → Parse LLM output for state changes → Update state
 - [[01-Architecture-and-Design|Architecture and Design Thread]]
 - [[08-NDL-Natural-Description-Language|NDL Documentation]]
 
+## Implementation in ChatBotRPG
+
+**Status**: ✅ **EXACT MATCH** - This pattern is implemented exactly as described in Discord
+
+**Source Files**:
+- `src/rules/apply_rules.py` - Rule evaluation engine
+- `src/core/utils.py` - State management
+- `src/core/process_keywords.py` - Keyword logic
+- `src/core/character_inference.py` - Character turn system
+
+### Production Example: Character Turn Processing
+
+**File**: `src/core/character_inference.py` (lines 268-274)
+
+```python
+system_msg_base_intro = (
+    "You are in a third-person text RPG. "
+    "You are responsible for writing ONLY the actions and dialogue of your assigned character, "
+    "as if you are a narrator describing them. "
+    "You must ALWAYS write in third person (using the character's name or 'he/she/they'), "
+    "NEVER in first or second person. "
+    "Write one single open-ended response (do NOT describe the OUTCOME of actions)."
+)
+```
+
+**Key Observation**: The LLM is explicitly instructed to NOT decide outcomes - only narrate predetermined actions.
+
+### Production Example: Rules System
+
+**File**: `src/rules/apply_rules.py`
+
+ChatBotRPG implements a JSON-based rules engine where Python evaluates conditions and triggers actions:
+
+```python
+# Rule conditions evaluated in Python, NOT by LLM
+{
+  "id": "midnight_bell",
+  "trigger": "after_receive",
+  "start_conditions": [
+    {"type": "Game Time", "operator": "==", "value": "00:00"}  # Python checks this
+  ],
+  "actions": [
+    {"type": "Inject Prompt", "content": "You hear church bells..."}  # LLM only narrates
+  ]
+}
+```
+
+**Why This Works**:
+- Game state updates happen in Python (save/load, variables, locations)
+- Rule conditions evaluated deterministically
+- LLM only generates narrative text (character speech, descriptions)
+- LLM never makes gameplay decisions (movement, combat, inventory)
+
+### Performance Metrics
+
+**From**: [[chatbotrpg-analysis/validation/01-Discord-Claims-Validation|Discord Claims Validation Report]]
+
+- **Validation Status**: 89% accuracy across all architectural patterns
+- **Implementation Quality**: Production-ready, well-tested
+- **Pattern Adoption**: 16/18 Discord patterns found in code
+
+### Related Implementation Files
+
+- [[chatbotrpg-analysis/patterns/01-Pattern-to-Code-Mapping|Pattern-to-Code Mapping]] - Full mapping of all 18 patterns
+- [[chatbotrpg-analysis/prompts/01-Extracted-Prompts-Index|Extracted Prompts Index]] - All 15 production prompts
+
 ## Tags
 
-#architecture #pattern #program-first #llm #game-engine #deterministic
+#architecture #pattern #program-first #llm #game-engine #deterministic #chatbotrpg-validated
