@@ -1,8 +1,8 @@
 ---
 tags: [person, developer, game-designer]
-role: "ChatBot RPG Developer"
-projects: "[[03-ChatBotRPG-Project]]"
-aliases: [monkeyrithms, "Newbiks Cube", appl2613]
+role: ChatBot RPG Developer
+projects: [[03-ChatBotRPG-Project]]
+aliases: [monkeyrithms, Newbiks Cube, appl2613]
 status: analyzed
 ---
 
