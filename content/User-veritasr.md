@@ -1,7 +1,7 @@
 ---
 tags: [person, developer, architect]
 role: Primary Architect & Developer
-projects: [[02-ReallmCraft-Project]], NDL
+projects: [[02-ReallmCraft-Project]]
 status: analyzed
 ---
 
