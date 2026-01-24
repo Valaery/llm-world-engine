@@ -32,6 +32,12 @@ Documentation from Discord discussions and GitHub analysis:
 - [[chatbotrpg-analysis/analysis/05-Production-Lessons|Production Lessons]] - Real-world insights
 - [[chatbotrpg-analysis/analysis/08-Anti-Hallucination-System|Anti-Hallucination System]] - Validation system
 - [[chatbotrpg-analysis/analysis/AGENT-EXECUTION-SUMMARY|Agent Execution Summary]] - github-repo-analyzer summary
+- [[chatbotrpg-analysis/analysis/test-driven-examples|Test-Driven Examples]] - Unit/integration tests as usage examples
+- [[chatbotrpg-analysis/analysis/ux-flows|UX Flows]] - User interaction flows and state transitions
+- [[chatbotrpg-analysis/analysis/configuration|Configuration]] - Configuration options and settings
+- [[chatbotrpg-analysis/analysis/dependencies|Dependencies]] - External library usage and technical decisions
+- [[chatbotrpg-analysis/analysis/security-considerations|Security Considerations]] - LLM integration security
+- [[chatbotrpg-analysis/analysis/abandoned-features|Abandoned Features]] - Dead code and failed experiments
 
 ### Prompts
 All prompts from Discord discussions and source code:
@@ -67,11 +73,27 @@ API integration and architecture analysis:
 Performance analysis and optimization opportunities:
 
 - [[chatbotrpg-analysis/performance/bottlenecks|Performance Bottlenecks]] - 18 bottlenecks identified, 60-80% optimization potential
+- [[chatbotrpg-analysis/performance/metrics|Performance Metrics]] - Benchmarks and optimization results
+
+### Evolution
+System and prompt evolution over time:
+
+- [[chatbotrpg-analysis/evolution/prompt-evolution|Prompt Evolution]] - How prompts evolved via git history
+
+### Discoveries
+Undocumented techniques and hidden gems:
+
+- [[chatbotrpg-analysis/discoveries/undocumented-techniques|Undocumented Techniques]] - 5 production features not discussed in Discord
 
 ### Validation
 Discord claims validation:
 
 - [[chatbotrpg-analysis/validation/01-Discord-Claims-Validation|Discord Claims Validation]] - 18 claims, 89% accuracy
+
+### Project README
+Project overview and getting started:
+
+- [[chatbotrpg-analysis/README|Project README]] - High-level overview and quick start guide
 
 ---
 
@@ -141,15 +163,18 @@ Discord claims validation:
 ## Documentation Statistics
 
 ### Files by Category
-- **Analysis**: 7 main files
+- **Analysis**: 13 files (main analysis + advanced)
 - **Prompts**: 6 files (5 discovered + 1 extracted index)
 - **Schemas**: 6 files + subdirectories
 - **Patterns**: 1 comprehensive mapping file
 - **Architecture**: 1 API integration file
-- **Performance**: 1 bottleneck analysis file (NEW)
+- **Performance**: 2 files (bottlenecks + metrics)
+- **Evolution**: 1 prompt evolution file
+- **Discoveries**: 1 undocumented techniques file
 - **Validation**: 1 claims validation file
+- **README**: 1 project overview file
 
-**Total**: 19+ files, ~350 KB
+**Total**: 25+ files, ~420 KB
 
 ### Agents Completed
 - ✅ github-repo-analyzer (Discord-based analysis)
@@ -158,7 +183,16 @@ Discord claims validation:
 - ✅ code-to-pattern-mapper (100+ code locations)
 - ✅ schema-archaeologist (18 schemas documented)
 - ✅ api-integration-tracer (multi-provider support)
-- ✅ bottleneck-identifier (18 bottlenecks identified, 60-80% optimization potential)
+- ✅ bottleneck-identifier (18 bottlenecks identified)
+- ✅ metrics-extractor (performance metrics and benchmarks)
+- ✅ test-case-analyst (test-driven examples)
+- ✅ ux-flow-tracer (user interaction documentation)
+- ✅ config-cartographer (configuration options)
+- ✅ dependency-tracker (library usage analysis)
+- ✅ security-auditor (LLM integration security)
+- ✅ dead-code-detector (abandoned features)
+- ✅ undocumented-discovery-agent (hidden gems)
+- ✅ git-history-miner (prompt evolution timeline)
 
 ---
 

@@ -1,6 +1,6 @@
 # Pattern: State-to-LLM Injection
 
-#pattern #integration #prompting #context-management
+#pattern #integration #prompt #context-management
 
 ## Context
 
@@ -399,4 +399,4 @@ narrative = llm.complete(prompt)
 
 ## Tags
 
-#prompting #context #llm #state-management #token-optimization
+#prompt #context #llm #state-management #token-optimization

@@ -1,11 +1,16 @@
 ---
-tags: [prompting, techniques, ndl, few-shot, thread]
+tags:
+- prompt
+- techniques
+- ndl
+- few-shot
+- thread
 date: 2026-01-15
 participants:
-  - "[[User-veritasr]]"
-  - "[[User-50h100a]]"
-  - "[[User-appl2613]]"
-  - "[[User-yukidaore]]"
+- '[[User-veritasr]]'
+- '[[User-50h100a]]'
+- '[[User-appl2613]]'
+- '[[User-yukidaore]]'
 status: analyzed
 ---
 

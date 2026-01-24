@@ -1,7 +1,15 @@
 ---
 title: Scene-Based State Boundaries
-tags: [pattern, state, persistence, scenes, architecture]
-contributors: [monkeyrithms, 50h100a, veritasr]
+tags:
+- pattern
+- state
+- persistence
+- scenes
+- architecture
+contributors:
+- monkeyrithms
+- 50h100a
+- veritasr
 source: Discord - LLM World Engine (Feb 2024)
 date: 2026-01-17
 status: complete
@@ -561,4 +569,4 @@ def test_scene_persistence():
 
 ## Tags
 
-#scene #persistence #state #boundaries #rpg #save-system
+#scenes #persistence #state #boundaries #rpg #save-system

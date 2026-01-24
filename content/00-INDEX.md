@@ -1,5 +1,8 @@
 ---
-tags: [index, overview, discord-analysis]
+tags:
+- index
+- overview
+- discord-analysis
 date: 2026-01-15
 source: Discord - LLM World Engine Channel (SillyTavern)
 total_lines: 37857
@@ -69,7 +72,6 @@ Visual asset catalog documenting screenshots, diagrams, and media files from the
 - **[[User-nyxkrage]]** (aka Nyx) - Early contributor with parallel game engine work
 - **[[User-irovos]]** - Combat system developer, Prolog experiments
 - **[[User-vali98]]** - Early architectural discussions, state management debates
-- **[[User-valaery]]** - RAG pipeline creator (current analyst)
 
 ### Design & Testing
 - **[[User-yukidaore]]** - Extensive testing, design feedback, model compatibility analysis
@@ -130,7 +132,7 @@ LLM Game Engine
 
 1. **By Topic**: Browse the numbered thread files (01-08) for thematic organization
 2. **By Person**: Check user pages for individual contributions and perspectives
-3. **By Concept**: Use tags like #architecture, #rag, #prompting, #worldgen
+3. **By Concept**: Use tags like #architecture, #rag, #prompt, #worldgen
 
 ## Related Resources
 
@@ -143,7 +145,7 @@ LLM Game Engine
 ### Technical Topics
 - #architecture - System design and patterns
 - #state-management - Game state handling
-- #prompting - Prompt engineering techniques
+- #prompt - Prompt engineering techniques
 - #rag - Retrieval-augmented generation
 - #worldgen - World and content generation
 - #ndl - Natural Description Language
@@ -172,56 +174,6 @@ LLM Game Engine
 > [!note] Analysis Methodology
 > This analysis was performed by reading strategic samples throughout the 37,857-line transcript, identifying major themes, tracking participants, and organizing discussions into coherent topic threads. Due to the massive size, complete line-by-line analysis was not feasible, but comprehensive sampling across the timeline ensures accurate representation of the conversation arc.
 
-## Vault Status
-
-### Core Topic Threads (10) ✅
-- [[00-INDEX]] - Master index (this file)
-- [[01-Architecture-and-Design]] - Core architectural patterns (enriched with LLM Processing Phases diagram)
-- [[02-Prompt-Engineering]] - Prompting techniques and evolution
-- [[03-RAG-and-Memory]] - Retrieval and memory systems
-- [[04-World-Generation]] - Procedural generation techniques
-- [[05-State-Management]] - Game state and persistence
-- [[06-UI-and-Frontend]] - Interface design and implementation (enriched with ChatBot RPG screenshots)
-- [[07-Models-and-APIs]] - LLM models and API integration
-- [[08-NDL-Natural-Description-Language]] - Complete NDL specification
-- [[09-Tools-and-Integrations]] - Tools, libraries, and frameworks
-- [[10-Media-Index]] - Visual asset catalog
-
-### Enrichment Libraries (107 files) ✅
-
-#### Prompt Library (18 files)
-- [[prompts/00-PROMPT-INDEX]] - Complete prompt template library
-- 17 production-tested prompts with performance metrics
-- Categories: Narration, Generation, Constraint, Retrieval, Reasoning, System, Techniques
-- All prompts from ReallmCraft and ChatBot RPG projects
-
-#### Pattern Library (19 files)
-- [[patterns/00-PATTERN-INDEX]] - Complete architectural pattern library
-- 18 complete patterns (90% of planned patterns)
-- Categories: Architectural, Integration, State, Generation, Control
-- All patterns with Mermaid diagrams and Python implementations
-
-#### NDL Specification (18 files)
-- [[ndl/00-NDL-INDEX]] - Complete NDL language reference
-- Formal grammar, lexical elements, semantics, type system
-- 7 core constructs, 5 pattern implementations
-- Production-ready language specification
-
-#### Quick Reference Indexes (2 files)
-- [[schemas-index]] - Data structures and state schemas reference
-- [[templates-index]] - Generation templates and prompt patterns reference
-
-### Quality Reports (3 files) ✅
-- [[QA-VALIDATION-REPORT]] - Enrichment outputs validation
-- [[TOPIC-THREADS-QA-REPORT]] - Main topic files validation
-- Quality score: 95/100 - Production ready
-
-### Person Pages (15+) ✅
-- [[User-veritasr]] - ReallmCraft creator profile
-- [[User-appl2613]] - ChatBot RPG developer profile (enriched with project screenshots)
-- [[User-50h100a]] - Thread originator profile
-- Plus 12+ additional contributor profiles
-
 ## Getting Started
 
 ### New to the Vault?
@@ -234,4 +186,4 @@ Check [[02-Prompt-Engineering]] for practical techniques, then [[03-RAG-and-Memo
 Read [[User-veritasr]] and [[User-appl2613]] profiles to see two different approaches, then explore the technical threads.
 
 ### Looking for Specific Topics?
-Use the tags system or search for keywords in your Obsidian vault.
+Use the tags system or search for keywords.

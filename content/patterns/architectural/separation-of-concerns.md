@@ -1,6 +1,6 @@
 # Pattern: Separation of Concerns
 
-#pattern #architectural #layered-architecture
+#pattern #architecture #layered-architecture
 
 ## Context
 

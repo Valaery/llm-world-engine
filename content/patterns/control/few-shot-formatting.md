@@ -1,7 +1,16 @@
 ---
 title: Few-Shot Formatting
-tags: [pattern, control, prompting, formatting, examples]
-contributors: [50h100a, monkeyrithms, veritasr, underscore_x]
+tags:
+- pattern
+- control
+- prompt
+- formatting
+- examples
+contributors:
+- 50h100a
+- monkeyrithms
+- veritasr
+- underscore_x
 source: Discord - LLM World Engine (Jan-Feb 2024)
 date: 2026-01-17
 status: complete
@@ -9,7 +18,7 @@ status: complete
 
 # Pattern: Few-Shot Formatting
 
-#pattern #control #prompting #few-shot #formatting
+#pattern #control #prompt #few-shot #formatting
 
 ## Context
 
@@ -550,4 +559,4 @@ Output: {"action": "use_skill", "skill": "lockpicking", "target": "lock", "modif
 
 ## Tags
 
-#few-shot #prompting #formatting #examples #pattern-learning #consistency
+#few-shot #prompt #formatting #examples #pattern-learning #consistency

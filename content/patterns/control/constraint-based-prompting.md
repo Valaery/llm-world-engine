@@ -1,6 +1,6 @@
 # Pattern: Constraint-Based Prompting
 
-#pattern #control #prompting #llm-guidance
+#pattern #control #prompt #llm-guidance
 
 ## Context
 
@@ -701,4 +701,4 @@ Pattern: All prompts use constraints to prevent common LLM errors
 
 ## Tags
 
-#pattern #control #prompting #constraints #validation #llm-guidance #chatbotrpg-validated
+#pattern #control #prompt #constraints #validation #llm-guidance #chatbotrpg-validated

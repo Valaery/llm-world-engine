@@ -1,6 +1,6 @@
 # Pattern: Chain of Thought with Function Keywords
 
-#pattern #control #prompting #function-calling #reasoning
+#pattern #control #prompt #function-calling #reasoning
 
 ## Context
 

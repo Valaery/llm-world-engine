@@ -157,7 +157,7 @@ All files have been updated to use the new flat structure paths. The master inde
 
 ## Related Documentation
 
-**Main Knowledge Base**: [[LLM World Engine/00-MASTER-INDEX|LLM World Engine Master Index]]
+**Main Knowledge Base**: [[00-MASTER-INDEX|LLM World Engine Master Index]]
 
 **Other Categories**:
 - [[LLM World Engine/prompts/00-PROMPT-INDEX|Prompt Library]] - 17 production-tested prompts

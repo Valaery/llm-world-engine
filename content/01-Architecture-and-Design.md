@@ -216,7 +216,7 @@ The conversation repeatedly returned to templates as a solution:
 - **Templates for events**
 - **Templates for items**
 
-This evolved into full modding frameworks in both major projects ([[02-ReallmCraft-Project]], [[03-ChatBotRPG-Project]]).
+This evolved into full modding frameworks in both major projects ([[ReallmCraft-Project]], [[ChatBotRPG-Project]]).
 
 ## Function Calling and Tool Use
 

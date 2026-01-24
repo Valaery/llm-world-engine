@@ -1,6 +1,6 @@
 # Pattern: Event-Driven Design
 
-#pattern #architectural #events #reactive
+#pattern #architecture #events #reactive
 
 ## Context
 
