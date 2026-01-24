@@ -6,13 +6,13 @@ title: LLM World Engine Knowledge Base
 
 > **Comprehensive documentation extracted from 24 months of Discord discussions + ChatBotRPG source code analysis**
 
-This knowledge base synthesizes **12,109 Discord messages** from the SillyTavern community's "LLM World Engine" thread (January 2024 - December 2025) into production-ready documentation.
+This knowledge base synthesizes **12,109 Discord messages** from the SillyTavern community's "LLM World Engine" thread (January 2024 - December 2025) into production-ready documentation comprising **139 files** and **63,000+ lines** of content.
 
 ## 📚 Quick Navigation
 
 ### Core Resources
 
-**[[00-MASTER-INDEX|Master Index]]** - Complete navigation hub for all 102 documents
+**[[00-MASTER-INDEX|Master Index]]** - Complete navigation hub for all 139 documents
 
 ### Main Topics
 
@@ -34,7 +34,7 @@ Production-tested prompts with real performance metrics:
 - **Constraint** (4): Anti-hallucination, format enforcement, length limiting
 - **Retrieval, Reasoning, System** (6): HyDE queries, chain-of-thought, few-shot
 
-### [[patterns/00-PATTERN-INDEX|Pattern Library]] (18 Patterns)
+### [[patterns/00-PATTERN-INDEX|Pattern Library]] (21 Patterns)
 Battle-tested architectural patterns:
 - **Architectural** (4): Program-first, LLM pipeline, separation of concerns, event-driven
 - **Integration** (4): NDL bridge, state injection, API abstraction, multi-model routing
@@ -42,13 +42,13 @@ Battle-tested architectural patterns:
 - **Generation** (3): JIT generation, hierarchical cascade, template meta-generation
 - **Control** (4): Constraint prompting, chain-of-thought, few-shot, temperature switching
 
-### [[ndl/00-NDL-INDEX|NDL Specification]] (17 Documents)
+### [[ndl/00-NDL-INDEX|NDL Specification]] (27 Documents)
 Complete Natural Description Language specification:
 - **7 Core Constructs**: `do()`, `search()`, `wait()`, `result()`, sequencing, manner, intention
 - **4 Formal Specs**: EBNF grammar, lexical elements, semantics, type system
 - **2 Integration Guides**: LLM pipeline, parser implementation
 
-### [[chatbotrpg-analysis/00-CHATBOTRPG-INDEX|ChatBotRPG Analysis]] (24 Documents)
+### [[chatbotrpg-analysis/00-CHATBOTRPG-INDEX|ChatBotRPG Analysis]] (41 Documents)
 Deep implementation analysis:
 - **Discord-based analysis**: Pattern implementation, production lessons
 - **Code analysis**: 15 extracted prompts, 100+ code references, 89% validation accuracy
@@ -74,10 +74,10 @@ Deep implementation analysis:
 
 ## 📊 Project Statistics
 
-- **102 total files**: Comprehensive knowledge base
-- **50,852 lines**: Production-ready documentation
-- **125+ code examples**: Python with type hints
-- **49+ Mermaid diagrams**: Architecture visualizations
+- **139 total files**: Comprehensive knowledge base
+- **63,563 lines**: Production-ready documentation
+- **1,000+ code examples**: Python with type hints
+- **41+ Mermaid diagrams**: Architecture visualizations
 - **24 months synthesized**: Jan 2024 - Dec 2025
 - **15+ contributors**: Community-driven knowledge
 
