@@ -101,12 +101,12 @@ New to LLM game engines? Start here:
 ## 🤝 About This Project
 
 This knowledge base was created using automated AI agents that:
-1. Analyzed 12,109 Discord messages
-2. Extracted 18 prompts, 18 patterns, complete NDL spec
-3. Validated claims against ChatBotRPG source code (89% accuracy)
+1. Analyzed 12,109 Discord messages over a two year period (Jan 2024 - Dec 2025)
+2. Extracted prompts, patterns, diagrams, and other technical documentation
+3. Validated discussions and claims against ChatBotRPG source code (89% accuracy)
 4. Generated Obsidian-compatible markdown with proper wiki-links
 
-**Source**: [SillyTavern Discord](https://discord.gg/sillytavern) - `#llm-tech-chat` channel
+**Source**: [SillyTavern Discord](https://discord.gg/sillytavern) - `#llm-tech-chat` channel, `llm-world-engine` thread
 
 ---
 
